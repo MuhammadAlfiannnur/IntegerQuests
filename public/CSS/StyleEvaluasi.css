@@ -1,0 +1,228 @@
+body {
+    font-family: sans-serif;
+    background-color: lightblue;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 900px;
+    display: flex;
+}
+
+.soal-area {
+    flex: 2;
+    padding-right: 20px;
+}
+
+.menu-soal {
+    flex: 1;
+    padding-left: 20px;
+    border-left: 1px solid #ddd;
+}
+
+.menu-soal h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.menu-soal ul {
+    list-style: none;
+    padding: 0;
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); 
+    gap: 8px; 
+}
+
+.menu-soal li {
+    margin-bottom: 0; 
+}
+
+.menu-soal a {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 10px; 
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    text-align: center;
+    cursor: pointer;
+    height: 40px;
+    width: 100%; 
+    box-sizing: border-box;
+}
+
+.menu-soal a.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.menu-soal a.answered {
+    background-color: #28a745;
+    color: white;
+}
+
+.soal {
+    display: none;
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.soal:first-child {
+    display: block;
+}
+
+.soal h3 {
+    margin-top: 0;
+    color: #555;
+}
+
+.pilihan {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.pilihan input[type="radio"] {
+    margin-right: 10px;
+}
+
+.navigation {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.navigation button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.navigation button[type="button"] {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.navigation button[type="button"]:hover {
+    background-color: #e0e0e0;
+}
+
+.navigation button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.navigation button[type="submit"]:hover {
+    background-color: #1e7e34;
+}
+
+.navigation button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.modal-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.confirm-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Form nama siswa */
+.form-nama {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.form-nama label {
+    font-weight: bold;
+}
+
+.form-nama input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-nama button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.form-nama button:hover {
+    background-color: #0069d9;
+}
+
+.hidden {
+    display: none;
+}
