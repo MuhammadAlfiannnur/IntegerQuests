@@ -40,7 +40,7 @@ class HalamanGuruController extends Controller
         $siswa = Siswa::findOrFail($id);
         $siswa->delete();
 
-        return redirect()->route('halamanguru')->with('success', 'Data siswa berhasil dihapus.');
+        return redirect()->route('guru.index')->with('success', 'Data siswa berhasil dihapus.');
     }
 
     public function destroyNilai($id)
@@ -49,7 +49,7 @@ class HalamanGuruController extends Controller
         $nilai = Nilai::findOrFail($id);
         $nilai->delete();
 
-        return redirect()->route('halamanguru')->with('success', 'Data nilai berhasil dihapus');
+        return redirect()->route('guru.index')->with('success', 'Data nilai berhasil dihapus');
     }
     
 }
