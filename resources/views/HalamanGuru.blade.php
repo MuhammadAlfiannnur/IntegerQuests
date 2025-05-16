@@ -51,6 +51,21 @@
                         </div>
                     @endif
 
+                    <div class="mb-3">
+                        <a href="{{ route('guru.export.pdf') }}" class="btn btn-danger">Export PDF</a>
+                    </div>
+
+                    {{-- Form Pencarian --}}
+                    <form action="{{ route('guru.index') }}" method="GET" class="mb-3 d-flex" style="gap: 10px; max-width: 400px;">
+                        <input type="text" name="search" class="form-control" placeholder="Cari nama atau nilai..." value="{{ request('search') }}">
+                        <button type="submit" class="btn btn-primary">Cari</button>
+                    </form>
+
+                    @if(request('search'))
+                        <p>Hasil pencarian untuk: <strong>{{ request('search') }}</strong></p>
+                    @endif
+
+                    @if($nilais->count())
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -78,67 +93,8 @@
                             @endforeach
                         </tbody>
                     </table>
+                    @endif
                 </div>
-
-                <!-- Hasil Evaluasi Section -->
-                {{-- <div id="hasil-evaluasi" class="content-section">
-                    <h2>Hasil Evaluasi</h2>
-                    <p>Konten hasil evaluasi ditampilkan di sini.</p>
-                    <table id="tabelEvaluasi" class="table">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama Siswa</th>
-                                <th>Nilai</th>
-                                <th>Benar</th>
-                                <th>Salah</th>
-                                <th>Waktu Submit</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data akan diisi oleh JavaScript -->
-                        </tbody>
-                    </table>
-
-                    @push('scripts')
-                    <script>
-                    $(document).ready(function() {
-                        // Ambil data evaluasi
-                        $.get('/evaluasi/data', function(data) {
-                            const tbody = $('#tabelEvaluasi tbody');
-                            tbody.empty();
-                            
-                            data.forEach((item, index) => {
-                                const row = `
-                                    <tr>
-                                        <td>${index + 1}</td>
-                                        <td>${item.nama}</td>
-                                        <td>${item.nilai.toFixed(2)}</td>
-                                        <td>${item.total_benar}</td>
-                                        <td>${item.total_salah}</td>
-                                        <td>${item.created_at}</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info btn-detail" data-id="${item.id}">
-                                                Detail
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `;
-                                tbody.append(row);
-                            });
-                        });
-
-                        // Tambahkan event untuk tombol detail
-                        $(document).on('click', '.btn-detail', function() {
-                            const siswaId = $(this).data('id');
-                            // Implementasi tampilkan detail jawaban
-                            alert('Detail jawaban siswa ID: ' + siswaId);
-                        });
-                    });
-                    </script>
-                    @endpush
-                </div> --}}
 
                 <!-- Data Siswa Section -->
                 <div id="data-siswa" class="content-section">

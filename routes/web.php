@@ -34,3 +34,5 @@ Route::prefix('guru')->group(function () {
 Route::get('/evaluasi/data', [EvaluasiController::class, 'getDataEvaluasi'])->name('evaluasi.data');
 
 // REMOVED: All commented old routes to clean up the file
+
+Route::get('/guru/export/pdf', [HalamanGuruController::class, 'exportPDF'])->name('guru.export.pdf');
