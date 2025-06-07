@@ -3,10 +3,15 @@
 @section('title', 'Halaman Beranda')
 
 @section('content')
+    <img src="{{ asset('Gambar/bgtanah.png') }}" id="tanah" alt="tanah">
+    <div id="background-layer">
+        <img src="{{ asset('Gambar/diam.gif') }}" id="follower" alt="karakter" />
+    </div>
     <div class="image_container">
         <img src="{{ asset('Gambar/halaman guru.png') }}" alt="Menuju Halaman Guru" id="HalGur">
     </div>
-    <h1>Media Pembelajaran <br> Matematika Bilangan Bulat <br> Kelas VII SMP/Mts</h1>  
+    <h1>Media Pembelajaran <br> Matematika Bilangan Bulat <br> Kelas VII SMP/Mts</h1>    
+    <h4>media ini menggunakan metode Game Based Learning</h4>    
 
     <div class="image_row">
         <img src="{{ asset('Gambar/cp.png') }}" alt="Capaian Pelajaran" id="CP">
@@ -82,6 +87,45 @@
 
 @section('scripts')
 <script>
+    const follower = document.getElementById('follower');
+    let lastX = 0;
+    let idleTimer = null;
+    let isIdle = true;
+
+    // Fungsi: ubah ke GIF diam
+    function setToIdle() {
+    follower.src = 'Gambar/diam.gif';
+    isIdle = true;
+    }
+
+    document.addEventListener('mousemove', (e) => {
+    // Ubah posisi
+    follower.style.left = `${e.clientX + 10}px`;
+
+    // Jika sebelumnya idle, ubah ke jalan.gif
+    if (isIdle) {
+        follower.src = 'Gambar/jalan.gif';
+        isIdle = false;
+    }
+
+        // Deteksi arah horizontal
+    if (e.clientX > lastX) {
+        // Bergerak ke kanan
+        follower.style.transform = 'scaleX(1)';
+    } else if (e.clientX < lastX) {
+        // Bergerak ke kiri
+        follower.style.transform = 'scaleX(-1)';
+    }
+
+    lastX = e.clientX;
+
+    // Reset timer idle setiap ada gerakan
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(setToIdle, 800); // 800ms tanpa gerak = diam
+    });
+
+
+
     const gambarCP = document.getElementById('CP');
     const gambarInfo = document.getElementById('Informasi');
     const gambarHalGur = document.getElementById('HalGur');

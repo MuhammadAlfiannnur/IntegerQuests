@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Guru;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Token;
 
 class AuthController extends Controller
 {
@@ -76,6 +77,23 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         return view('auth.login'); // You'll need to create this view
+    }
+
+    public function cekToken(Request $request)
+    {
+       $token = $request->input('token');
+        $nama = $request->input('nama');
+
+        $valid = Token::where('token', $token)->exists();
+
+        if ($valid) {
+            // Contoh jika valid, kirim status 1, pesan dan id token (atau data lain)
+            return response("1|Token valid|");
+        } else {
+            // Jika tidak valid, kirim status 0 dan pesan error
+            return response("0|Token tidak ditemukan|");
+        }
+        
     }
 }
 

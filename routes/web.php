@@ -25,8 +25,9 @@ Route::prefix('evaluasi')->group(function () {
 // Route Halaman Guru - renamed for consistency
 Route::prefix('guru')->group(function () {
     Route::get('/', [HalamanGuruController::class, 'index'])->name('guru.index');
+    Route::post('/token', [HalamanGuruController::class, 'storeToken'])->name('token.store');
     Route::delete('/siswa/{id}', [HalamanGuruController::class, 'destroySiswa'])->name('siswa.destroy');
-    Route::delete('guru/nilai/{id}', [HalamanGuruController::class, 'destroyNilai'])->name('guru.nilai.destroy');
+    Route::delete('/nilai/{id}', [HalamanGuruController::class, 'destroyNilai'])->name('guru.nilai.destroy');
 });
 
 
@@ -36,3 +37,5 @@ Route::get('/evaluasi/data', [EvaluasiController::class, 'getDataEvaluasi'])->na
 // REMOVED: All commented old routes to clean up the file
 
 Route::get('/guru/export/pdf', [HalamanGuruController::class, 'exportPDF'])->name('guru.export.pdf');
+
+Route::post('/cek-token', [AuthController::class, 'cekToken'])->name('cek.token');

@@ -34,6 +34,16 @@ h3 {
     font-family: 'Aharoni', sans-serif;
     color: rgb(35, 70, 72);
 }
+h4 {
+    position: absolute;
+    top: 52%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1em !important;
+    font-family: 'Aharoni', sans-serif;
+    color: rgb(35, 70, 72);
+    text-align: center;
+}
 .image_row {
     position: absolute;
     top: 60%; 
@@ -108,4 +118,33 @@ img {
     background-color: #ccc;
     border: none;
     border-radius: 3px;
+}
+
+#follower {
+      position: fixed;
+      top: calc(100vh - 180px);
+      top: 510px;
+      width: 100px;
+      height: auto;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.1s linear;
+    }
+#background-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0; /* lapisan dasar */
+  pointer-events: none;
+}
+#tanah {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;        /* melebar penuh */
+  height: auto;
+  z-index: -1;         /* di belakang konten utama */
+  pointer-events: none;
 }
