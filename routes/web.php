@@ -33,9 +33,15 @@ Route::prefix('guru')->group(function () {
 
 // NEW: Route for getting evaluasi data via AJAX
 Route::get('/evaluasi/data', [EvaluasiController::class, 'getDataEvaluasi'])->name('evaluasi.data');
+Route::post('/cek-nama-siswa', [EvaluasiController::class, 'cekNamaSiswa'])->name('cek.nama.siswa');
 
 // REMOVED: All commented old routes to clean up the file
 
 Route::get('/guru/export/pdf', [HalamanGuruController::class, 'exportPDF'])->name('guru.export.pdf');
 
 Route::post('/cek-token', [AuthController::class, 'cekToken'])->name('cek.token');
+
+
+Route::get('/test-rute-sukses', function () {
+    return 'Rute ini berhasil diakses!';
+});

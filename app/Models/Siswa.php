@@ -12,7 +12,7 @@ class Siswa extends Model
     protected $table = 'siswas';
 
     // Isikan kolom yang boleh di‐mass‐assign, termasuk 'kelas_id'
-    protected $fillable = ['nama', 'kelas_id'];
+    protected $fillable = ['nama', 'kelas_id','token','level'];
 
     public function jawabans()
     {

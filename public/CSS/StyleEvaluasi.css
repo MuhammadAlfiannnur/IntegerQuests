@@ -226,3 +226,81 @@ body {
 .hidden {
     display: none;
 }
+
+
+#submit-wrapper {
+    margin-top: 25px; /* Memberi jarak dari daftar nomor di atasnya */
+}
+
+.submit-btn-evaluasi {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background-color: #28a745; /* Warna hijau */
+    color: white;
+    transition: background-color 0.2s;
+}
+
+.submit-btn-evaluasi:hover {
+    background-color: #218838; /* Warna hijau lebih gelap saat disentuh */
+}
+
+.legend-keterangan {
+    margin-top: 20px; /* Jarak dari nomor soal */
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+    font-size: 14px;
+}
+
+.legend-item {
+    display: flex; /* Membuat kotak dan teks sejajar */
+    align-items: center; /* Menengahkan secara vertikal */
+    margin-bottom: 10px;
+}
+
+.legend-item:last-child {
+    margin-bottom: 0; /* Hapus margin bawah untuk item terakhir */
+}
+
+.legend-box {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    margin-right: 10px; /* Jarak antara kotak dan teks */
+    border-radius: 4px;
+    flex-shrink: 0; /* Mencegah kotak mengecil */
+}
+
+/* Warna untuk setiap kotak legenda */
+/* PASTIKAN WARNA INI SAMA DENGAN WARNA NOMOR SOAL ANDA */
+
+.legend-box.box-biru {
+    background-color: #007bff; /* Warna untuk status 'active' */
+    border-color: #0056b3;
+}
+
+.legend-box.box-hijau {
+    background-color: #28a745; /* Warna untuk status 'answered' */
+    border-color: #1e7e34;
+}
+
+.legend-box.box-putih {
+    background-color: #fff;
+}
+
+#timer-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #d9534f; /* Warna merah agar terlihat mendesak */
+    text-align: right; /* Posisi di kanan area soal */
+    padding: 10px;
+    border: 1px dashed #d9534f;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}

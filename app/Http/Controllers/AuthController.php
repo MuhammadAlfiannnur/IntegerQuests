@@ -83,17 +83,52 @@ class AuthController extends Controller
     {
        $token = $request->input('token');
         $nama = $request->input('nama');
+        $level = $request->input('level'); // dari Construct 2
 
-        $valid = Token::where('token', $token)->exists();
+        // Cek apakah token valid
+        $tokenData = \App\Models\Token::where('token', $token)->first();
 
-        if ($valid) {
-            // Contoh jika valid, kirim status 1, pesan dan id token (atau data lain)
-            return response("1|Token valid|");
-        } else {
-            // Jika tidak valid, kirim status 0 dan pesan error
-            return response("0|Token tidak ditemukan|");
+        if ($tokenData) {
+            // Cek apakah siswa sudah ada
+            $siswa = \App\Models\Siswa::where('nama', $nama)->where('token', $token)->first();
+
+            if (!$siswa) {
+                $siswa = \App\Models\Siswa::create([
+                    'nama' => $nama,
+                    'token' => $token,
+                    'level' => $level ?? 1,
+                    'kelas_id' => $tokenData->kelas_id
+               ]);
+            }
+
+            // Sekarang dijamin $siswa tidak null
+            return response("{$siswa->level}|Token valid|", 200)
+                ->header('Content-Type', 'text/plain');
         }
+
+        return response("0|Token tidak ditemukan|", 200)
+            ->header('Content-Type', 'text/plain');
         
     }
+    public function updateLevel(Request $request)
+    {
+        $nama = $request->input('nama');
+        $token = $request->input('token');
+        $level = $request->input('level');
+
+        $siswa = \App\Models\Siswa::where('nama', $nama)
+                    ->where('token', $token)
+                    ->first();
+
+        if ($siswa) {
+            $siswa->level = $level;
+            $siswa->save();
+
+            return response("1|Level diperbarui|");
+        }
+
+        return response("0|Siswa tidak ditemukan|");
+    }
+
 }
 
