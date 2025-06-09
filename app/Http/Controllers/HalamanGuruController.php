@@ -8,6 +8,8 @@ use App\Models\Nilai;
 use App\Models\Kelas;
 use App\Models\Token;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel; // <-- Tambahan untuk Excel
+use App\Exports\NilaiExport;        // <-- Tambahan untuk Excel
 
 class HalamanGuruController extends Controller
 {
@@ -30,32 +32,79 @@ class HalamanGuruController extends Controller
         $this->checkLogin();
 
         $search = $request->input('search');
+        $filterKelas = $request->input('kelas_id');
 
-        // Ambil data Nilai sekaligus relasi Siswa—dan rekursif ambil relasi Kelas
-        $nilais = \App\Models\Nilai::with('siswa.kelas')
-            ->when($search, function ($query, $search) {
-                return $query->whereHas('siswa', function ($q) use ($search) {
-                            $q->where('nama', 'like', "%{$search}%");
-                        })
-                        ->orWhere('nilai', 'like', "%{$search}%");
-            })
-            ->get();
+        // Query utama: Mulai dari Siswa untuk menampilkan semua siswa
+        $query = Siswa::with(['kelas', 'nilai'])->orderBy('nama', 'asc');
 
-        // Ambil semua Kelas (untuk dropdown di form token)
-        $kelas = \App\Models\Kelas::all();
+        // Terapkan filter pencarian nama jika ada
+        if ($search) {
+            $query->where('nama', 'like', "%{$search}%");
+        }
 
-        // Ambil semua Siswa sekaligus relasi Kelas
-        $siswas = \App\Models\Siswa::with('kelas')->get();
+        // Terapkan filter kelas jika ada
+        if ($filterKelas) {
+            $query->where('kelas_id', $filterKelas);
+        }
 
-        return view('HalamanGuru', compact('nilais', 'kelas', 'siswas'));
+        $siswas = $query->get();
+        $kelas = Kelas::all();
+
+        // Hitung semua data statistik
+        $totalSiswa = Siswa::count();
+        $totalEvaluasi = Nilai::count();
+        $rataRataNilai = Nilai::avg('nilai');
+
+        // Kirim SEMUA variabel yang dibutuhkan ke view
+        return view('HalamanGuru', compact(
+            'siswas', 
+            'kelas', 
+            'totalSiswa', 
+            'totalEvaluasi', 
+            'rataRataNilai'
+        ));
     }
 
-    public function exportPDF()
+    public function exportPDF(Request $request)
     {
-        $nilais = Nilai::with('siswa')->get();
+        $search = $request->input('search');
+        $filterKelas = $request->input('kelas_id');
 
+        // Query untuk PDF (bersumber dari Nilai agar setiap pengerjaan tercatat)
+        $query = Nilai::with(['siswa.kelas'])->orderBy('created_at', 'desc');
+
+        if ($search) {
+            $query->whereHas('siswa', function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%");
+            });
+        }
+
+        if ($filterKelas) {
+            $query->whereHas('siswa', function ($q) use ($filterKelas) {
+                $q->where('kelas_id', $filterKelas);
+            });
+        }
+
+        $nilais = $query->get();
+        
         $pdf = Pdf::loadView('exports.nilai_pdf', compact('nilais'));
-        return $pdf->download('data_nilai.pdf');
+        return $pdf->download('laporan-nilai-siswa.pdf');
+    }
+
+    /**
+     * Menangani permintaan untuk mengekspor data ke Excel.
+     */
+    public function exportExcel(Request $request)
+    {
+        // 1. Ambil filter yang sedang aktif dari URL
+        $search = $request->input('search');
+        $filterKelas = $request->input('kelas_id');
+        
+        // 2. Tentukan nama file yang akan diunduh secara dinamis
+        $fileName = 'hasil-evaluasi-' . date('d-m-Y') . '.xlsx';
+
+        // 3. Panggil class export dengan membawa filter, lalu unduh filenya
+        return Excel::download(new NilaiExport($search, $filterKelas), $fileName);
     }
 
     public function destroySiswa($id)
@@ -74,7 +123,6 @@ class HalamanGuruController extends Controller
         return redirect()->route('guru.index')->with('success', 'Data nilai berhasil dihapus');
     }
 
-    // Tambahkan method untuk menyimpan token baru
     public function storeToken(Request $request)
     {
         $this->checkLogin();
@@ -83,10 +131,8 @@ class HalamanGuruController extends Controller
             'kelas_id' => 'required|exists:kelas,id',
         ]);
 
-        // Generate token unik, contoh 8 karakter acak
         $tokenValue = strtoupper(bin2hex(random_bytes(4)));
 
-        // Simpan token ke database
         Token::create([
             'kelas_id' => $request->kelas_id,
             'token' => $tokenValue,
@@ -95,7 +141,5 @@ class HalamanGuruController extends Controller
         return redirect()->route('guru.index')
             ->with('token_success', 'Token berhasil dibuat!')
             ->with('token_generated', $tokenValue);
-
-        
     }
 }

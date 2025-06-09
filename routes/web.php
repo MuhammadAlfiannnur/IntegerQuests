@@ -39,6 +39,9 @@ Route::post('/cek-nama-siswa', [EvaluasiController::class, 'cekNamaSiswa'])->nam
 
 Route::get('/guru/export/pdf', [HalamanGuruController::class, 'exportPDF'])->name('guru.export.pdf');
 
+// ▼▼▼ TAMBAHKAN RUTE BARU INI ▼▼▼
+Route::get('/guru/export/excel', [HalamanGuruController::class, 'exportExcel'])->name('guru.export.excel');
+
 Route::post('/cek-token', [AuthController::class, 'cekToken'])->name('cek.token');
 
 

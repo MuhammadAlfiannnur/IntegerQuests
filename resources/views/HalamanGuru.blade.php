@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Halaman Guru</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
-    <link href="{{ asset('css/stylesHalamanGuru.css') }}" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="{{ asset('css/stylesHalamanGuru.css?v=1.2') }}" rel="stylesheet" />
     <style>
         .content-section { display: none; }
         .content-section.active { display: block; }
@@ -20,7 +20,6 @@
             <div class="sidebar-heading border-bottom bg-light">Halaman Guru</div>
             <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#" data-target="nilai-siswa">Nilai Siswa</a>
-                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#" data-target="data-siswa">Data Siswa</a>
                 <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#" data-target="buat-token">Buat Token</a>
                 <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ route('beranda') }}" onclick="return confirmBack()">Kembali Ke Beranda</a>
             </div>
@@ -44,93 +43,132 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
 
-                    <div class="mb-3">
-                        <a href="{{ route('guru.export.pdf') }}" class="btn btn-danger">Export PDF</a>
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card text-white bg-primary">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Siswa</h5>
+                                    <p class="card-text fs-4 fw-bold">{{ $totalSiswa }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-success">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Pengerjaan</h5>
+                                    <p class="card-text fs-4 fw-bold">{{ $totalEvaluasi }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-info">
+                                <div class="card-body">
+                                    <h5 class="card-title">Rata-rata Skor</h5>
+                                    <p class="card-text fs-4 fw-bold">{{ number_format($rataRataNilai, 1) }}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Form Pencarian -->
-                    <form action="{{ route('guru.index') }}" method="GET" class="mb-3 d-flex" style="gap: 10px; max-width: 400px;">
-                        <input type="text" name="search" class="form-control" placeholder="Cari nama atau nilai..." value="{{ request('search') }}">
+                    <div class="mb-3">
+                        <a href="{{ route('guru.export.pdf', ['search' => request('search'), 'kelas_id' => request('kelas_id')]) }}" class="btn btn-danger">Export PDF</a>
+                        
+                        <a href="{{ route('guru.export.excel', ['search' => request('search'), 'kelas_id' => request('kelas_id')]) }}" class="btn btn-success">Export Excel</a>
+                    </div>
+
+                   
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <form action="{{ route('guru.index') }}" method="GET" class="d-flex" style="gap: 10px;">
+                        <input type="text" name="search" class="form-control" placeholder="Cari nama..." value="{{ request('search') }}">
+                        
+                        {{-- Ini adalah input tersembunyi untuk menyimpan filter kelas saat mencari nama --}}
+                        @if(request('kelas_id'))
+                            <input type="hidden" name="kelas_id" value="{{ request('kelas_id') }}">
+                        @endif
+
                         <button type="submit" class="btn btn-primary">Cari</button>
                     </form>
+
+                    <form action="{{ route('guru.index') }}" method="GET">
+                        <select name="kelas_id" class="form-select" onchange="this.form.submit()">
+                            <option value="">Semua Kelas</option>
+                            @foreach($kelas as $k)
+                                <option value="{{ $k->id }}" {{ request('kelas_id') == $k->id ? 'selected' : '' }}>
+                                    {{ $k->nama_kelas }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+
                     @if(request('search'))
                         <p>Hasil pencarian untuk: <strong>{{ request('search') }}</strong></p>
                     @endif
 
-                    @forelse($nilais as $nilai)
-                        @if($loop->first)
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Nama Siswa</th>
-                                        <th>Kelas</th>
-                                        <th>Nilai</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                        @endif
+                    <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Siswa</th>
+                            <th>Kelas</th>
+                            <th>Level</th>
+                            <th>Skor</th>
+                            <th>Waktu Pengerjaan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($siswas as $siswa)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $nilai->siswa->nama }}</td>
-                            <td>{{ $nilai->siswa->kelas->nama_kelas ?? '-' }}</td>
-                            <td>{{ $nilai->nilai }}</td>
+                            <td>{{ $siswa->nama }}</td>
+                            <td>{{ $siswa->kelas->nama_kelas ?? '-' }}</td>
+                            
+                            {{-- Kolom Level --}}
                             <td>
-                                <form action="{{ route('guru.nilai.destroy', $nilai->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data nilai ini?');">
+                                @if($siswa->level)
+                                    <span class="badge rounded-pill bg-dark">Level {{ $siswa->level }}</span>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            
+                            {{-- Kolom Skor --}}
+                            <td>
+                                @php
+                                    $nilaiAngka = $siswa->nilai->nilai ?? null;
+                                    $badgeClass = 'bg-secondary';
+                                    if ($nilaiAngka >= 80) $badgeClass = 'bg-success';
+                                    elseif ($nilaiAngka >= 60) $badgeClass = 'bg-warning text-dark';
+                                    elseif ($nilaiAngka !== null) $badgeClass = 'bg-danger';
+                                @endphp
+                                <span class="badge {{ $badgeClass }}">{{ $nilaiAngka ?? '-' }}</span>
+                            </td>
+
+                            {{-- Kolom Waktu Pengerjaan (Pastikan ada pengecekan $siswa->nilai) --}}
+                            <td>
+                                {{ $siswa->nilai ? $siswa->nilai->created_at->format('d M Y, H:i') : '-' }}
+                            </td>
+                            
+                            {{-- Kolom Aksi --}}
+                            <td>
+                                <form action="{{ route('siswa.destroy', $siswa->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data siswa ini beserta semua riwayat nilainya?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">Hapus</button>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Hapus</button>
                                 </form>
                             </td>
                         </tr>
-                        @if($loop->last)
-                                </tbody>
-                            </table>
-                        @endif
-                    @empty
-                        <p>Tidak ada data nilai siswa.</p>
-                    @endforelse
+                        @empty
+                        <tr>
+                            <td colspan="7" class="text-center">Tidak ada data siswa untuk ditampilkan.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
                 </div>
 
-                <!-- Data Siswa Section -->
-                <div id="data-siswa" class="content-section">
-                    <h2>Data Siswa</h2>
-
-                    @if($siswas->count())
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nama</th>
-                                    <th>Kelas</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($siswas as $s)
-                                    <tr>
-                                        <td>{{ $s->id }}</td>
-                                        <td>{{ $s->nama }}</td>
-                                        <td>{{ $s->kelas->nama_kelas ?? '-' }}</td>
-                                        <td>
-                                            <form action="{{ route('siswa.destroy', $s->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data siswa ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger btn-sm" type="submit">Hapus</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @else
-                        <p>Tidak ada data siswa untuk ditampilkan.</p>
-                    @endif
-                </div>
-
-                <!-- Buat Token Section -->
-                <div id="buat-token" class="content-section">
+                 <div id="buat-token" class="content-section">
                     <h2>Buat Token Baru Per Kelas</h2>
 
                     @if(session('token_success'))
@@ -155,7 +193,6 @@
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
