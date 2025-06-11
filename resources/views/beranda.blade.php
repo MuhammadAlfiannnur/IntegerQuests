@@ -16,7 +16,7 @@
     <div class="image_row">
         <img src="{{ asset('Gambar/cp.png') }}" alt="Capaian Pelajaran" id="CP">
         
-        <a href="https://vermillion-lokum-11c81a.netlify.app/" id="Mulai">
+        <a href="https://storied-biscuit-f3350f.netlify.app/" id="Mulai">
             <img src="{{ asset('Gambar/mulai.png') }}" alt="Memulai Media" class="linkable" >
         </a>
         {{-- <img src="{{ asset('Gambar/mulai.png') }}" alt="Memulai Media" id="Mulai"> --}}
